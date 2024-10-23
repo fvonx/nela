@@ -1,0 +1,25 @@
+<% content_for :title, "Nela Sign in" %>
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+<%= h1 "Sign in" %>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "flex flex-col gap-y-5" }) do |f| %>
+
+  <%= form_group do %>
+    <%= f.label :email %>
+    <em class="text-sm text-gray-500">(the old world address)</em>
+    <%= f.email_field :email, autofocus: true, autocomplete: "handle" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :password, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.password_field :password, autocomplete: "current-password" %>
+  <% end %>
+
+  <%= form_group "row" do %>
+    <%= f.check_box :remember_me, class: "h-4 w-4 text-sky-500 border-gray-300 rounded focus:ring-sky-500" %>
+    <%= f.label :remember_me %>
+  <% end %>
+
+  <%= f.submit "Sign in" %>
+  
+<% end %>

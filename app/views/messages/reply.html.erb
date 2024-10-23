@@ -1,0 +1,4 @@
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+<%= h1 "Reply to Message" %>
+<%= render "form", reply: @reply %>
+<%= back_to_button conversation_path(@reply.conversation) %>

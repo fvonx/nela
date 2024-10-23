@@ -1,0 +1,30 @@
+<%= form_with(model: [@conversation], local: true, class: "flex flex-col gap-y-5") do |form| %>
+
+  <%= form_errors_for @conversation %>
+
+  <%= form.fields_for :messages do |message_fields| %> 
+    <div class="flex items-center gap-x-1">
+      <span class="font-medium">From</span>
+      <span class="text-fuchsia-500"><%= current_user.address %></span>
+    </div>
+    
+    <%= form_group do %>
+      <%= message_fields.label :title, "Subject" %>
+      <%= message_fields.text_field :title %>
+    <% end %>
+
+    <%= form_group do %>
+      <%= message_fields.label :receivers_input, "To" %>
+      <em class="text-sm text-gray-500">(comma-separated)</em>
+      <%= message_fields.text_field :receivers_input %>
+    <% end %>
+
+    <%= form_group do %>
+      <%= message_fields.label :body, "Message" %>
+      <%= message_fields.text_area :body, rows: 10 %>
+    <% end %>
+  <% end %>
+
+  <%= form.submit 'Start Conversation' %>
+
+<% end %>

@@ -1,0 +1,106 @@
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+
+<%= h1 "Natively easy, lightweight, and adaptable communication." %>
+<%= paragraph do %>
+  <span class="font-medium text-gray-800">Less Protocol.</span> Lately there's been a lot of talk about „more“ — more capacity, more insights, more always-on. Nela is more of less. There is beauty in less. Less makes room for innovation. Less bullshit is the killer feature that Nela addresses. It's a return to the start of textual communication: clear at first glance, put into code soon after. Nela cuts through the noise of more. 20% for 80%? Who knows?!
+<% end %>
+
+<span class="font-medium text-gray-800">Here's everything you need to know:</span>
+
+<!-- Protocol tabs -->
+<div class="flex flex-col gap-y-8 " data-controller="toggle-tabs">
+  <!-- Tabs buttons -->
+  <div class="inline-flex gap-x-1 self-start bg-gray-100 rounded-full p-1">
+    <button class="inline-flex items-center justify-center px-4 py-1.5 font-medium rounded-full" data-toggle-tabs-target="button" data-action="click->toggle-tabs#toggle" data-index="0">Receive Messages</button>
+    <button class="inline-flex items-center justify-center px-4 py-1.5 font-medium rounded-full" data-toggle-tabs-target="button" data-action="click->toggle-tabs#toggle" data-index="1">Handshake Messages</button>
+  </div>
+  <!-- First tab content for message receiving -->
+  <div class="w-full flex flex-col gap-y-[12px] py-3 border border-gray-200 rounded-lg shadow-sm" data-controller="toggle-payload" data-toggle-tabs-target="tabContent">
+    <div class="w-full flex items-center justify-between px-3 font-medium">
+      <div class="font-mono">
+        <span class="text-orange-500 font-bold">POST</span> /nela/messages
+      </div>
+      <button type="button" data-action="click->toggle-payload#toggle" data-toggle-payload-target="minusIcon" aria-label="Toggle content visibility">
+        <%= heroicon_tag "minus", class: "w-[24px] h-[24px]" %>
+      </button>
+      <button class="hidden" type="button" data-action="click->toggle-payload#toggle" data-toggle-payload-target="plusIcon" aria-label="Toggle content visibility">
+        <%= heroicon_tag "plus", class: "w-[24px] h-[24px]" %>
+      </button>
+    </div>
+    <%= separator %>
+    <div class="w-full flex flex-col px-3 font-mono overflow-x-scroll" data-toggle-payload-target="content">
+    <pre class="mb-4"><span class="text-gray-400">Content-Type</span>: <span class="text-gray-500">application/json</span></pre>
+      <pre><span class="text-[#21AC80]">"message"</span>: {</pre>
+        <pre>  <span class="text-[#21AC80]">"title"</span>:            <span class="text-[#FB63CD]">"Hello World"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"body"</span>:             <span class="text-[#FB63CD]">"Nice to meet you"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"sender"</span>:           <span class="text-[#FB63CD]">"matthias@withnela.com"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"direct_receiver"</span>:  <span class="text-[#FB63CD]">"lou@withnela.com"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"all_receivers"</span>:    [<span class="text-[#FB63CD]">"lou@withnela.com"</span>, <span class="text-[#FB63CD]">"clara@withnela.com"</span>],</pre>
+        <pre>  <span class="text-[#21AC80]">"conversation_ref"</span>: <span class="text-[#FB63CD]">"b3222267-5e86-4a05-9f07-ead7c85bc580"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"message_ref"</span>:      <span class="text-[#FB63CD]">"cb97a34f-dadf-4579-9a55-485f1cc2c68c"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"handshake_ref"</span>:    <span class="text-[#FB63CD]">"851a8754-6887-4b3f-8553-fdd779d8baa4"</span></pre>
+      <pre>},</pre>
+      <pre><span class="text-[#21AC80]">"signature"</span>:   <span class="text-[#FB63CD]">"(Base64-encoded signature)"</span>,</pre>
+      <pre><span class="text-[#21AC80]">"certificate"</span>: <span class="text-[#FB63CD]">"(PEM-encoded certificate)"</span>,</pre>
+    </div>
+  </div>
+  <!-- Second tab content for message handshaking -->
+  <div class="hidden w-full flex flex-col gap-y-[12px] py-3 border border-gray-200 rounded-lg shadow-sm" data-controller="toggle-payload" data-toggle-tabs-target="tabContent">
+    <div class="w-full flex items-center justify-between px-3 font-medium">
+      <div class="font-mono">
+        <span class="text-orange-500 font-bold">PUT</span> /nela/messages/<span class="text-gray-400">[message_ref]</span>/handshakes/<span class="text-gray-400">[handshake_ref]</span>
+      </div>
+      <button type="button" data-action="click->toggle-payload#toggle" data-toggle-payload-target="minusIcon" aria-label="Toggle content visibility">
+        <%= heroicon_tag "minus", class: "w-[24px] h-[24px]" %>
+      </button>
+      <button class="hidden" type="button" data-action="click->toggle-payload#toggle" data-toggle-payload-target="plusIcon" aria-label="Toggle content visibility">
+        <%= heroicon_tag "plus", class: "w-[24px] h-[24px]" %>
+      </button>
+    </div>
+    <%= separator %>
+    <div class="w-full flex flex-col px-3 font-mono overflow-x-scroll" data-toggle-payload-target="content">
+      <pre class="mb-4"><span class="text-gray-400">Content-Type</span>: <span class="text-gray-500">application/json</span></pre>
+      <pre><span class="text-[#21AC80]">"message"</span>: {</pre>
+        <pre>  <span class="text-[#21AC80]">"sender"</span>:           <span class="text-[#FB63CD]">"matthias@withnela.com"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"direct_receiver"</span>:  <span class="text-[#FB63CD]">"lou@withnela.com"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"conversation_ref"</span>: <span class="text-[#FB63CD]">"b3222267-5e86-4a05-9f07-ead7c85bc580"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"message_ref"</span>:      <span class="text-[#FB63CD]">"cb97a34f-dadf-4579-9a55-485f1cc2c68c"</span>,</pre>
+        <pre>  <span class="text-[#21AC80]">"handshake_ref"</span>:    <span class="text-[#FB63CD]">"851a8754-6887-4b3f-8553-fdd779d8baa4"</span></pre>
+      <pre>},</pre>
+      <pre><span class="text-[#21AC80]">"signature"</span>:   <span class="text-[#FB63CD]">"(Base64-encoded signature)"</span>,</pre>
+      <pre><span class="text-[#21AC80]">"certificate"</span>: <span class="text-[#FB63CD]">"(PEM-encoded certificate)"</span>,</pre>
+    </div>
+  </div>
+</div>
+
+<%= highlight "Only accept connections via HTTPs", "lock-closed" %>
+
+<div class="w-full flex items-center justify-between">
+  <%= link_to "API Documentation", "#", class: "underline" %>
+  <%= link_to "Reference implementation", "#", class: "underline" %>
+</div>
+
+<%= separator %>
+
+<div class="flex flex-col gap-y-4">
+  <span class="self-start inline-flex items-center justify-center gap-x-1 py-0.5 px-3 bg-gray-50 border border-gray-200 font-medium rounded-full"><%= heroicon_tag "link", class: "w-[20px] h-[20px]" %>Soon</span>
+  <%= paragraph do %>
+    <span class="font-medium text-gray-800">Less Attachments.</span> Less applies for attachments, too. Today, everyone can send anything to anyone — thousands of virtual packages piling up right outside your front door. Nela doesn't support attachments; instead, it supports links (remember, we're in HTTPS land). Like a menu you can choose from — pick only the delicious stuff to keep your front door clean.
+  <% end %>
+</div>
+
+<%= separator %>
+
+<span class="font-medium text-gray-800">Ready for your first Nela message?</span>
+
+<%= paragraph do %>
+  Then please sign up above (or from your own implementation) and get in touch via Nela: <span class="text-sky-500">matthias@withnela.org</span>.
+<% end %>
+
+<%= separator %>
+
+<%= image_tag "nela.png", class: "rounded-lg" %>
+
+<%= separator %>
+
+<%= link_to "License", "https://opensource.org/license/MIT", class: "underline" %>

@@ -1,0 +1,47 @@
+<% content_for :title, "Conversations" %>
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+<%= h1 "Conversations" %>
+
+<%= tab_menu params %>
+
+<% if @conversations.any? %>
+  <% @conversations.each do |conversation| %>
+    <div class="flex flex-col gap-y-2 w-full">    
+      <div class="flex gap-x-3 w-full">
+        <%= avatar(conversation.latest_message.sender) %>
+        <div class="flex flex-col gap-y-1 w-full min-w-0">
+          <div class="flex flex-col gap-y-0 w-full min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="text-fuchsia-500"><%= conversation.latest_message.sender %></span>
+              <div class="flex items-center gap-x-1">
+                <%= handshake_icon conversation.latest_message %>
+                <span class="text-gray-400 text-sm">
+                  <%= conversation.latest_message.created_at.strftime("%b %d, %Y, %I:%M %p") %>
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-x-1.5">
+              <%= unread_indicator(conversation) %>
+              <%= link_to conversation.title || "Untitled", conversation_path(conversation), class: "truncate font-medium" %>
+            </div>
+          </div>
+          <%= paragraph do %>
+            <%= conversation.latest_message.body.truncate(130) %>
+          <% end %>
+          <div class="flex items-center gap-x-1.5 w-full">
+            <%= link_to reply_conversation_message_path(conversation, conversation.latest_message), class: "self-start inline-flex gap-x-1 text-sky-500 items-center underline whitespace-nowrap hover:text-sky-600" do %>
+              <%= heroicon_tag "arrow-uturn-left", class: "w-[20px] h-[20px]" %> 
+              Reply to
+            <% end %>
+            <div class="text-gray-500 rounded-full"><%= addresses_group reply_to(conversation.latest_message) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pl-[52px]"><%= separator %></div>
+  <% end %>
+<% else %>
+  <%= highlight "Oops, no conversations yet", "face-frown" %>
+<% end %>
+
+<%= new_conversation_button %>

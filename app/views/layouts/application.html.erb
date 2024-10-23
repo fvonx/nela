@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Nela" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="antialiased text-gray-800 text-[15px]">
+    <nav class="sticky top-0 z-40 w-full bg-white border-b border-b-gray-200">
+      <div class="flex items-center justify-between max-w-[1016px] px-2 w-full mx-auto h-[50px]">
+        <%= link_to "Nela", root_path, class: "text-lg font-semibold" %>
+        <div class="flex items-center gap-x-3 font-medium">
+          <% if user_signed_in? %>
+              <%= link_to "Conversations", conversations_path %>
+              <%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete } %>
+            <% else %>
+              <%= link_to "Sign in", new_user_session_path %>
+              <%= link_button "Sign up", "primary", new_user_registration_path %>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+    <main class="relative max-w-[1016px] p-2 w-full mx-auto flex flex-col gap-y-8 mt-9">
+      <%= yield %>
+    </main>
+  </body>
+</html>

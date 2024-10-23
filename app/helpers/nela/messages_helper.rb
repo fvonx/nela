@@ -1,0 +1,2 @@
+module Nela::MessagesHelper
+end

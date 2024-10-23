@@ -1,0 +1,46 @@
+<% content_for :title, "Account Settings" %>
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+<%= h1 "Account Settings" %>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "flex flex-col gap-y-5" }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <%= form_group do %>
+    <%= f.label :handle %>
+    <%= f.text_field :handle, autofocus: true, autocomplete: "handle" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :email %>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :password %>
+    <i class="text-sm text-gray-500">(leave blank if you don't want to change it)</i>
+    <%= f.password_field :password, autocomplete: "new-password" %>
+    <% if @minimum_password_length %>
+      <em class="text-sm text-gray-500 block"><%= @minimum_password_length %> characters minimum</em>
+    <% end %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :current_password %>
+    <i class="text-sm text-gray-500">(we need your current password to confirm your changes)</i>
+    <%= f.password_field :current_password, autocomplete: "current-password" %>
+  <% end %>
+  
+  <%= f.submit "Update Account" %>
+<% end %>
+
+<h3 class="text-xl font-semibold mt-6 mb-3 text-gray-900">Cancel my account</h3>
+
+<%= paragraph do %>
+  Unhappy? 
+  <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete, class: "mt-1 inline-block py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition" %>
+<% end %>

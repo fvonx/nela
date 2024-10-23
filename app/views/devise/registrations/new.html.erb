@@ -1,0 +1,36 @@
+<% content_for :title, "Nela Sign up" %>
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+<%= h1 "Sign up" %>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "flex flex-col gap-y-5" }) do |f| %>
+
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <%= form_group do %>
+    <%= f.label :handle %>
+    <em class="text-sm text-gray-500">(e.g. handle@withnela.com)</em>
+    <%= f.text_field :handle, autofocus: true, autocomplete: "handle" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :email, class: "block text-sm font-medium text-gray-700" %>
+    <em class="text-sm text-gray-500">(the old world address)</em>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+      <em class="text-sm text-gray-500">(<%= @minimum_password_length %> characters minimum)</em>
+    <% end %>
+    <%= f.password_field :password, autocomplete: "new-password" %>
+  <% end %>
+
+  <%= form_group do %>
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  <% end %>
+  
+  <%= f.submit "Sign up" %>
+
+<% end %>

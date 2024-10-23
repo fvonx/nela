@@ -1,0 +1,5 @@
+<%= heroicon_tag "chat-bubble-oval-left-ellipsis", class: "w-10 h-10" %>
+<%= h1 "New Conversation" %>
+<%= render "form", conversation: @conversation %>
+
+<%= back_to_button conversations_path %>
