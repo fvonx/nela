@@ -11,14 +11,28 @@ class SignatureVerifier
   end
 
   def verify
-    return false unless signature && certificate
+    return false unless signature && certificates.any?
     return false unless certificate_valid?
-    return false unless domain_matches_certificate?
-
-    public_key.verify(digest, signature, canonical_message)
+    return false unless domains_match?
+  
+    verify_signature
   rescue OpenSSL::OpenSSLError => e
     Rails.logger.error "Signature verification error: #{e.message}"
     false
+  end  
+
+  def verify_signature
+    case public_key
+    when OpenSSL::PKey::RSA
+      public_key.verify(digest, signature, canonical_message)
+    when OpenSSL::PKey::DSA
+      public_key.sysverify(digest.digest(canonical_message), signature)
+    when OpenSSL::PKey::EC
+      public_key.dsa_verify_asn1(digest.digest(canonical_message), signature)
+    else
+      Rails.logger.error "Unsupported public key type: #{public_key.class}"
+      return false
+    end
   end
 
   private
@@ -30,15 +44,8 @@ class SignatureVerifier
     nil
   end
 
-  def certificate
-    @certificate ||= OpenSSL::X509::Certificate.new(@certificate_pem)
-  rescue OpenSSL::X509::CertificateError => e
-    Rails.logger.error "Invalid certificate: #{e.message}"
-    nil
-  end
-
   def public_key
-    certificate.public_key
+    end_entity_cert.public_key
   end
 
   def digest
@@ -53,39 +60,67 @@ class SignatureVerifier
     store = OpenSSL::X509::Store.new
 
     if Rails.env.development?
-      store.add_cert(certificate)
+      store.add_cert(end_entity_cert)
     else
       store.set_default_paths
+
+      certificates[1..-1].each do |cert|
+        store.add_cert(cert)
+      end
     end
 
-    store.verify(certificate)
+    store_context = OpenSSL::X509::StoreContext.new(store, end_entity_cert)
+
+    store_context.verify
   end
 
-  def domain_matches_certificate?
-    cert_domains = []
-
-    cert_cn = extract_cn(certificate.subject.to_s)
-
-    cert_domains << cert_cn if cert_cn
-
-    san_extension = certificate.extensions.find { |ext| ext.oid == 'subjectAltName' }
+  def certificates
+    @certificates ||= load_certificates(@certificate_pem)
+  end
   
-    if san_extension
-      san_domains = san_extension.value.scan(/DNS:([^\s,]+)/).flatten
-      cert_domains.concat(san_domains)
-    end
+  def end_entity_cert
+    @end_entity_cert ||= certificates.first
+  end
 
-    cert_domains.any? do |cert_domain|
-      cert_domain && @expected_domain && cert_domain.casecmp(@expected_domain)&.zero?
+  def load_certificates(pem_data)
+    pem_certs = pem_data.scan(/-----BEGIN CERTIFICATE-----(.*?)-----END CERTIFICATE-----/m)
+
+    pem_certs.map do |cert_pem|
+      OpenSSL::X509::Certificate.new("-----BEGIN CERTIFICATE-----#{cert_pem.first}-----END CERTIFICATE-----")
     end
   end
 
-  def extract_cn(subject)
-    if subject =~ /\/CN=([^\/]+)/
-      return $1
+  def extract_domains_from_certificate(certificate)
+    domains = []
+  
+    cn_entry = certificate.subject.to_a.find { |name, _, _| name == 'CN' }
+  
+    if cn_entry
+      cn = cn_entry[1].downcase
+
+      domains << cn
     else
-      return nil
+      Rails.logger.warn "Certificate does not contain a Common Name (CN)."
     end
+  
+    san_extension = certificate.extensions.find { |ext| ext.oid == 'subjectAltName' }
+
+    if san_extension
+      san         = san_extension.value
+      san_domains = san.scan(/DNS:([^\s,]+)(?:,|$)/i).flatten
+
+      domains.concat(san_domains.map(&:downcase))
+    else
+      Rails.logger.warn "Certificate does not contain a Subject Alternative Name (SAN) extension."
+    end
+  
+    domains.uniq
+  end
+
+  def domains_match?
+    domains = extract_domains_from_certificate(end_entity_cert)
+    
+    domains.include?(@expected_domain)
   end
 
 end
