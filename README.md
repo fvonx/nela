@@ -6,8 +6,8 @@
 
 To send and receive messages with Nela, all you need to do is implement two API endpoints — Nela handles message reception, while the rest is up to you. The protocol stays out of your way:
 
-1. POST /nela/messages – for receiving messages
-2. PUT /nela/messages/<message_ref>/handshakes/<handshake_ref> – to confirm the existence of the sender and message
+1. `POST /nela/messages` – for receiving messages
+2. `PUT /nela/messages/<message_ref>/handshakes/<handshake_ref>` – to confirm the existence of the sender and message
 
 ## Overview
 
