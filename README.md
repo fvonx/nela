@@ -2,7 +2,12 @@
 
 ## Addressing Innovation in Textual Communication
 
-**Addressing Innovation in Textual Communication.** Why hasn't there been any recent innovation in email communication clients? The main reason is that the infrastructure has become overly complex, making it extremely time-consuming to develop a new client. Innovative ideas often can't be realized due to the sheer complexity of the underlying protocols. Nela is here to simplify this process, enabling faster and more secure development of communication solutions.
+**Addressing Innovation in Textual Communication.** We believe the primary reason email client innovation has stagnated is the overwhelming complexity of the underlying infrastructure and protocols. Building new clients has become exceptionally time-consuming. That's why email clients from 2000 look remarkably similar to those in 2024. Nela is here to change that. By streamlining the development process, Nela paves the way for faster, more secure advancements in text-based communication.
+
+To send and receive messages with Nela, all you need to do is implement two API endpoints — Nela handles message reception, while the rest is up to you. The protocol stays out of your way:
+
+1. POST /nela/messages – for receiving messages
+2. PUT /nela/messages/<message_ref>/handshakes/<handshake_ref> – to confirm the existence of the sender and message
 
 ## Overview
 
@@ -42,7 +47,7 @@ Messages follow a JSON-based structure that includes information about the sende
 
 ### Handshake Mechanism
 
-The handshake mechanism ensures that a message was intentionally sent by the sender and that it truly exists within the sender's infrastructure. This mechanism allows the receiver to verify the authenticity of the sender and ensure that the message was not spoofed.
+The handshake mechanism guarantees that a message was deliberately transmitted by the sender and is genuinely present within their infrastructure. This process enables the receiver to authenticate the sender's identity and confirm that the message has not been fabricated or impersonated.
 
 1. **Sender**: Send the message with a `handshake_ref`.
 2. **Receiver**: Send a handshake request to the sender including the `handshake_ref`.
@@ -67,7 +72,7 @@ The `/nela/messages` endpoint allows authorized systems to send messages to the 
 - **Parameters**:
   - `signature` (required): The base64-encoded digital signature of the message.
   - `certificate` (required): The PEM-encoded certificate of the sender.
-  - `message` (required): The message body.
+  - `message` (all attributes required): The message body (please find example below).
 
 #### Response Codes
 
@@ -84,9 +89,46 @@ curl -X POST "https://nela.example.com/nela/messages" \
     "message": {
       "title": "Hello World",
       "body": "Nice to meet you",
-      "sender": "matthias@withnela.com",
-      "direct_receiver": "lou@withnela.com",
-      "all_receivers": ["lou@withnela.com", "clara@withnela.com"],
+      "sender": "matthias@withnela.org",
+      "direct_receiver": "lou@withnela.org",
+      "all_receivers": ["lou@withnela.org", "clara@withnela.org"],
+      "conversation_ref": "b3222267-5e86-4a05-9f07-ead7c85bc580",
+      "message_ref": "cb97a34f-dadf-4579-9a55-485f1cc2c68c",
+      "handshake_ref": "851a8754-6887-4b3f-8553-fdd779d8baa4"
+    },
+    "signature": "(Base64-encoded signature)",
+    "certificate": "(PEM-encoded certificate)"
+  }'
+```
+
+### Handshake Incoming Messages
+
+The `/nela/messages/<message_ref>/handshakes/<handshake_ref>` endpoint allows the receiver to confirm that the message has not been fabricated or impersonated.
+
+#### Request
+
+- **URL**: `/nela/messages/<message_ref>/handshakes/<handshake_ref>`
+- **Method**: `PUT`
+- **Parameters**:
+  - `signature` (required): The base64-encoded digital signature of the message.
+  - `certificate` (required): The PEM-encoded certificate of the sender.
+  - `message` (all attributes required): The message body (please find example below).
+
+#### Response Codes
+
+- `200 Ok`: Message successfully handshaked.
+- `404 Not Found`: Invalid message
+- `401 Unauthorized`: Signature verification failed.
+
+#### Example Request
+
+```
+curl -X PUT "https://nela.example.com/nela/messages/<message_ref>/handshakes/<handshake_ref>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": {
+      "sender": "matthias@withnela.org",
+      "direct_receiver": "lou@withnela.org",
       "conversation_ref": "b3222267-5e86-4a05-9f07-ead7c85bc580",
       "message_ref": "cb97a34f-dadf-4579-9a55-485f1cc2c68c",
       "handshake_ref": "851a8754-6887-4b3f-8553-fdd779d8baa4"
